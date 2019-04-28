@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+	<title>遇见公共聊天室</title>
+	<link rel="stylesheet" href="https://at.alicdn.com/t/font_1048312_26ev48bvg1j.css">
+	<style>
+		/*clear default css*/
+		html, body
+		{
+			margin : 0;
+			height : 100%;
+			width : 100%;
+			overflow : hidden;
+		}
+		body
+		{
+			position:fixed;
+			left:0;
+			top:0;
+			display : grid;
+			grid-template-rows: 50px minmax(0, 1fr) auto;
+		}
+		input
+		{
+			padding : 0;
+			margin : 0;
+			border : 0;
+		}
+
+		a{
+			text-decoration : none;
+		}
+		
+		ul,li
+		{
+			margin : 0;
+			padding : 0;
+		}
+		li
+		{
+			list-style : none;
+		}
+
+		/*normal css*/
+		header,footer
+		{
+			background : #666666;
+			line-height: 40px;
+			height : auto;
+			max-height : 120px;
+			text-align : center;
+			color : #aaaaaa;
+			box-sizing : border-box;
+			padding : 5px;
+		}
+		header > div.onlineList{
+			float:right;
+			height : 100%;
+
+
+		}
+		div.messageBox
+		{
+			height : 100%;
+			box-sizing : border-box;
+		}
+		footer  div[type=text]
+		{
+			width: 70%;
+			min-height: 25px;
+			max-height: 110px;
+			vertical-align : middle;
+			border-radius : 5px;
+			background : white;
+			display : inline-block;
+			text-align: left;
+			line-height : 25px;
+			overflow-y : scroll;
+			padding : 5px;
+			box-sizing : border-box;
+		}
+		footer > div img, div.messageBox .msgtool > div img
+		{
+			width : 25px;
+			height : 25px;
+			display: inline-block;
+			vertical-align : middle;
+		}
+		div.messageBox .msgtool > img{
+			min-width : 50px;
+			max-width : 100%;
+			height : auto;
+			border-radius : 10px;
+		}
+		footer  input[type=button]
+		{
+			width : 10%;
+			height : 35px;
+			vertical-align : middle;
+			border-radius : 5px;
+		}
+		nav
+		{
+			height : 200px;
+			display : none;
+			background : #fefefe;
+			overflow-y: scroll;
+			grid-template-columns: repeat(5, 1fr);
+			grid-row-gap : 10px;
+			justify-items : center ;
+			padding : 10px;
+		}
+		nav img
+		{
+			width : 45px;
+			height :45px;
+			display : block;
+		}
+		div.messageBox .container
+		{
+			height : 100%;
+			overflow-y : scroll	;
+		}
+		div.messageBox .messageRect
+		{
+			padding : 20px;
+		}
+		div.messageBox  .head
+		{
+			width : 50px;
+			height : 50px;
+			background : #666666;
+			border-radius : 5px;
+			line-height : 50px;
+			text-align : center;
+			color : white;
+		}
+
+
+		div.messageBox  .msgtool
+		{
+			display : inline-grid;
+			grid-template-columns : auto 1fr;
+			align-items : center;
+			width : auto;
+		}
+		div.messageBox  .content
+		{
+			width : 60%;
+			margin : 0 15px;
+		}
+		div.messageBox  .content div:first-child
+		{
+			font-size : small;
+			color : #666666;
+			padding : 3px;
+		}
+		div.messageBox  .msgtool div:nth-child(2)
+		{
+			
+			background : #c3c3c3;
+			min-height : 50px;
+			border-radius : 5px;
+			padding : 10px;
+			box-sizing : border-box;
+			max-width : 100%;
+			text-align : left;
+			word-break : break-all;
+		}
+		div.messageBox  .clear
+		{
+			clear : both;
+		}
+
+
+		div.messageBox .reformRect
+		{
+			text-align : center;
+		}
+		div.messageBox .reformRect div
+		{
+			background : #dedede;
+			display: inline-block;
+			border-radius : 10px;
+			font-size : small;
+			box-size : border-box;
+			padding : 3px 7px;
+			margin : 10px;
+			color : white;
+		}
+		
+		div.sideCover
+		{
+			position: absolute;
+			left:100%;
+			right:0;
+			width:50%;
+			height:100%;
+			background:rgba(85,85,85,0.5);
+			transition : left 0.3s;
+			overflow-y : scroll;
+		}
+		div.sideCover div:first-child
+		{
+			text-align : center;
+			padding : 20px;
+			background : rgba(85,85,85,0.5);
+		}
+
+		div.sideCover div:nth-child(2)
+		{
+			padding : 20px;
+			color : #dedede;
+		}
+		div.sideCover a
+		{
+			display : inline-block;
+			width : 100px;
+			color : #dedede;
+			border : 1px solid white;
+			border-radius : 10px;
+		}
+
+		div.popWindow
+		{
+			position : absolute;
+			left : 0;
+			top : 0;
+			width : 100%;
+			height : 100%;
+			background : rgba(0,0,0,0.1);
+			display : none;
+			grid-template-columns : 1fr;
+			grid-template-rows : 1fr;
+			align-items : center;
+			justify-items : center;
+		}
+
+		div.popWindow .text
+		{
+			font-size : small;
+		}
+		div.popWindow .text, .icon-jiazai
+		{
+			grid-column-start : 1;
+			grid-row-start : 1;
+			color : white;
+		}
+
+
+		/*flex*/
+
+		.faceActive
+		{
+			color : #AFE3FF;
+		}
+
+		.faceContentActive
+		{
+			display : grid;
+		}
+
+		.floatLeft
+		{
+			float: left;
+		}
+
+
+		.floatRight
+		{
+			float: right;
+		}
+
+		.textRight
+		{
+			text-align : right;
+		}
+
+		div.sideCoverActive
+		{
+			left : 50%;
+		}
+
+		
+		div.messageBox  .msgtoolFailed{
+			display : block;
+		}
+		
+		div.popWindowActive{
+			display : grid;
+		}
+
+		/*icon*/
+
+		.tool-icon{
+			font-size: 24px;
+			vertical-align: middle;
+		}
+
+		.icon-shibai{
+			display : none;
+		}
+		.icon-shibai::before{
+			color : red;
+			margin-right : 5px;
+		}
+		.icon-jiazai{
+ 			font-size : 50px; 
+			width : 50px;
+			height : 50px;
+			line-height : 50px;
+			display : inline-block;
+			vertical-align : middle;
+			animation : rotateUpload 1s linear infinite;
+		}
+		/*other*/
+		@keyframes rotateUpload{
+			from{
+				transform: rotate(0deg);
+			}
+			to{
+				transform: rotate(360deg);
+			}
+		}
+	</style>
+</head>
+
+<body>
+<header>
+	<span> 遇见公共聊天室 </span><span id="onlineCount"></span>
+	<div class="onlineList"><span class="iconfont icon-chengyuan tool-icon" id="sideCoverTrigger"></span></div>
+	<div style="clear:both"></div>
+</header>
+<div class="messageBox">
+	<div class="container" id="container">
+	</div>
+</div>
+<footer>
+	<span class="iconfont icon-biaoqing tool-icon" id="faceActive"></span>
+	<label class="iconfont icon-tupian tool-icon" id="pictureActive" style="font-size:32px;" for="pictureSelector"></label>
+	<input type="file" id="pictureSelector" accept="image/jpeg,image/gif,image/bmp,image/x-png" style="display:none"/>
+	<div type="text" id="text" contenteditable="true"></div>
+	<input type="button" id="button" value="发送" />
+</footer>
+<nav id="faceContentActive">
+	<script>
+		for(var i = 1; i <= 68; i++)
+		{
+			document.write("<img src='../static/images/paopao/"+i+".png'/>")
+		}
+
+		for(var i = 1; i <= 16; i++)
+		{
+			document.write("<img src='../static/images/paopao/b"+i+".png'/>")
+		}
+	</script>
+</nav>
+<div class="sideCover" id="sideCover">
+	<div><a href="javascript:alert('敬请期待')">APP下载</a></div>
+	<div>
+		<ul id="userList">
+<!-- 			<li>张三</li>
+			<li>李四</li>
+			<li>王麻子</li> -->
+		</ul>
+	</div>
+</div>
+<div class="popWindow" id="popWindow">
+	<div class="iconfont icon-jiazai"></div>
+	<div class="text" id="popWindowText">100</div>
+</div>
+<script src="../static/servers.js"></script>
+<script src="../static/message.js"></script>
+<script>
+	var isActive = false;
+	var faceActive = document.getElementById("faceActive");
+	var faceContentActive = document.getElementById("faceContentActive");
+	var text = document.getElementById("text");
+	var sideCoverTrigger = document.getElementById("sideCoverTrigger");
+	var sideCover = document.getElementById("sideCover");
+	var pictureSelector = document.getElementById("pictureSelector");
+	var popWindow = document.getElementById("popWindow");
+	var popWindowText = document.getElementById("popWindowText");
+	var range = document.createRange();
+	var w = "";
+	range.setStart(text, 0);
+	range.setEnd(text, 0);
+	faceActive.onclick = function(){
+		isActive = !isActive;
+		//restore the range
+		if(range){
+			document.getSelection().removeAllRanges();
+			document.getSelection().addRange(range);
+		}
+		if(isActive)
+		{
+			faceActive.classList.add("faceActive");
+			faceContentActive.classList.add("faceContentActive")
+		}else{
+			faceActive.classList.remove("faceActive");
+			faceContentActive.classList.remove("faceContentActive")
+		}
+	}
+	document.body.onclick=function(){
+		sideCover.classList.remove("sideCoverActive");
+	}
+	sideCoverTrigger.onclick=function(e){
+		sideCover.classList.add("sideCoverActive");
+		e.stopPropagation();
+	}
+	sideCover.onclick = function(e){
+		e.stopPropagation();
+	}
+	images = faceContentActive.getElementsByTagName("img");
+	for(let i = 0; i < images.length; i++){
+		images[i].onclick = ()=>{
+			document.execCommand('InsertImage', false, images[i].src);
+		}
+	}
+	text.onblur = function(){
+		//save the range
+		range = document.getSelection().getRangeAt(0).cloneRange();
+	}
+	pictureSelector.onchange = function(){
+		file = this.files[0];
+		if(file.type != "image/png" &&
+		 file.type != "image/jpeg" &&
+		  file.type != "image/gif" &&
+		   file.type != "image/bmp"){
+		   	alert("文件类型不正确");
+		   	return;
+		}else if(file.size > 1048576){ //1M
+			alert("文件大于1M");
+			return;
+		}
+		form = new FormData();
+		form.append("id", "34");
+		form.append("picture", pictureSelector.files[0]);  //get the file that properly
+		http = new XMLHttpRequest();
+		http.open("post", "/uploadPicture", true);
+		http.upload.onloadstart = function(){
+			popWindow.classList.add("popWindowActive");
+		}
+		var onloadend = function(){
+			popWindow.classList.remove("popWindowActive");
+		}
+		http.upload.onerror = function(){
+			onloadend();
+			alert("上传发生错误");
+		}
+		http.upload.onprogress = function(e){
+			popWindowText.innerText = Math.ceil(e.loaded / e.total * 100);
+		}
+		http.onreadystatechange = function(e){
+			if(this.readyState == 4 && this.status == "200"){
+				console.log(this.responseText);
+				onloadend();
+				//broadcast picture
+				if(sendMessage(w, 1, nickName, window.URL.createObjectURL(file) ,this.responseText)){
+					console.log("file broadcast successed");
+				}
+			}
+		}
+
+
+
+		http.send(form);
+		//console.log(this.files[0]);
+	}
+
+</script>
+ 	<script>
+		var container = document.getElementById("container");
+		var text = document.getElementById("text");
+		var button = document.getElementById("button");
+		var onlineCount = document.getElementById("onlineCount");
+		var userList = document.getElementById("userList");
+		var nickName = ""
+		while(true)
+		{
+			nickName = prompt("请输入你的昵称")
+			if(nickName && nickName.trim() != "")
+			{
+				break;
+			}
+		}
+
+		function produceMessage(msgJson)
+		{
+			/*
+				msgJson = 
+				{
+					type :          0 enter, 1 textMsg, 2 left, 3 heartbeating, 4 picture
+					nickName :
+					content :
+				}
+			*/
+			if(msgJson.type != 1 && msgJson.type != 4)
+			{
+				txt = msgJson.type == 0 ? "进入" : "离开";
+				txt = msgJson.nickName + " " + txt + "聊天室";
+				var msgBox = document.createElement("div");
+				var msgBoxtext = document.createElement("div");
+				msgBoxtext.innerText = txt;
+				msgBox.classList.add("reformRect");
+				msgBox.appendChild(msgBoxtext);
+				container.appendChild(msgBox);
+			}else
+			{
+				var isSelf = msgJson.nickName == nickName;
+				var isPic = msgJson.type == 4;
+				var msgBox = document.createElement("div")
+				var msghead = document.createElement("div")
+				var msgcontent = document.createElement("div")
+				var msgclear = document.createElement("div")
+				var msgtitle = document.createElement("div")
+				var msgval = document.createElement(isPic ? "img" :"div")
+				var msgtool = document.createElement("div");
+				var msgprom = document.createElement("div");
+				msghead.innerText = msgJson.nickName[0];
+				msgtitle.innerText = msgJson.nickName;
+				//console.log(msgJson);
+				msgval.innerHTML = msgJson.content;
+				msgBox.classList.add("messageRect");
+				msghead.classList.add("head");
+				msgcontent.classList.add("content");
+				msgclear.classList.add("clear");
+				msgtool.classList.add("msgtool");
+				classHead = isSelf ? "floatRight" : "floatLeft";
+				classContent = classHead;
+				classContent2 = isSelf ? "textRight" : "textLeft";
+				msghead.classList.add(classHead);
+				msgcontent.classList.add(classContent);
+				msgcontent.classList.add(classContent2);
+				//relationship
+				msgtool.appendChild(msgprom);
+				msgtool.appendChild(msgval);
+				msgcontent.appendChild(msgtitle);
+				msgcontent.appendChild(msgtool);
+				msgBox.appendChild(msghead);
+				msgBox.appendChild(msgcontent);
+				msgBox.appendChild(msgclear);
+				container.appendChild(msgBox);
+				//for picture
+				if(isSelf){
+					msgprom.classList.add("iconfont");
+					msgprom.classList.add("icon-shibai");
+					//msgprom.classList.add("msgtoolFailed");
+					/*msgprom.onclick =  function(){
+						//true false
+						if(confirm("重新发送?")){
+							//resent the msg
+						}
+					}*/
+				}
+				if(isPic){
+					msgval.src = msgJson.content;
+				}
+
+
+
+			return [msgprom,msgBox];
+			}
+		}
+
+		/*produceMessage({type: 0, nickName : "杨圆飞"});
+		produceMessage({type: 2, nickName : "杨圆飞"});
+		produceMessage({type: 1, nickName : "杨圆飞", content : "你好"});
+		produceMessage({type: 1, nickName : "杨", content : "你好啊"});
+		produceMessage({type: 4, nickName : "123", content : "https://gw.alicdn.com/tps/TB1W_X6OXXXXXcZXVXXXXXXXXXX-400-400.png"});*/
+
+		wsServers = new Servers([
+			"ws://localhost:5001"
+        ]);
+		
+
+		function openWebsocket(nickname, url)
+		{
+			var web = new WebSocket(url);
+			web.onmessage = (msg)=>{
+				var msgJson = eval("(" + msg.data + ")");
+				if(msgJson.type != 3){ //heartbeating response
+					if(msgJson.nickName == nickName)
+					{
+						return;
+					}
+					var needScroll = (container.scrollHeight - container.clientHeight) - container.scrollTop < 30;
+					try{
+						var msgContent =  JSON.parse(msgJson.content);
+					}catch(e){
+						console.log(msgJson);
+					}
+					msgJson.content = msgContent.content;
+					if(msgContent.type == 1){
+						msgJson.type = 4;
+						msgJson.content = "../uploads/" + msgContent.content;
+					}
+					produceMessage(msgJson);
+					if(needScroll)
+					{
+						container.scrollTop = container.scrollHeight - container.clientHeight;
+					}
+				}else{
+					onlineCount.innerText = "(" + msgJson.content.length + "人在线)";
+					userList.innerHTML="";
+					for(var i = 0; i < msgJson.content.length; i++){
+						userList.innerHTML+="<li>"+msgJson.content[i]+"</li>";
+					}
+					console.log("heartbeating was responsed from server");
+				}
+			};
+			web.onopen = ()=>
+			{
+				web.send(nickname);
+			};
+			return web
+		}
+		
+		w = openWebsocket(nickName, wsServers.next())
+
+
+		function sendMessage(ws,  type, nickname, selfContent, broadContent){
+			var msgType = type == 0 ? 1 : 4;
+			if(selfContent.trim() != "" || broadContent.indexOf("img") != -1)
+			{
+				var msgItem = produceMessage({type: msgType, nickName : nickname, content : selfContent});
+				try{
+					/*for some devices that can not surpport ES6 completely*/
+					if(!(ws instanceof WebSocket) || ws.readyState != 1){
+						throw "ws error";
+					}
+					var newMsg = new message(type, broadContent);
+					ws.send(newMsg.tostring());
+				}catch(e){
+					alert(e);
+					msgItem[0].classList.add("msgtoolFailed");
+					msgItem[0].onclick = function(){
+						if(confirm("重新发送吗？")){
+							container.removeChild(msgItem[1]);
+							sendMessage(w, type, nickname, selfContent, broadContent);
+						}
+					}
+				}
+				scrollToBottom(container);
+			}
+			return true;
+		}
+		
+		function scrollToBottom(conBox){
+			//scroll to the bottom
+			conBox.scrollTop = conBox.scrollHeight - conBox.clientHeight;
+		}
+
+		setInterval(function(){
+			if(w.readyState == 3)
+			{
+				console.log("网络发生了错误");
+				//produceMessage({type: 1, nickName : "系统", content : "连接不上服务器，请检查网络。"});
+				w = openWebsocket(nickName, wsServers.next())
+
+			}else if(w.readyState == 1)
+			{
+				//console.log("heartbeating");
+				w.send("heartbeating");
+			}
+		}, 1000)
+
+		button.onclick = function(){
+			if(sendMessage(w, 0, nickName, text.innerHTML, text.innerHTML)){
+				text.innerHTML = "";
+			}	
+		}
+		
+		text.onkeydown = (ev)=>{
+			if(ev.altKey == true && ev.key === "Enter")
+			{
+				button.onclick()
+			}
+		}
+
+
+
+
+
+
+	</script>
+</body>
+</html>
